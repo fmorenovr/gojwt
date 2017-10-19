@@ -52,7 +52,7 @@ func CreateHS256Token(username string) (string, error) {
     },
   }
   token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-  tokenString, err := token.SignedString(secretByte)
+  tokenString, err := token.SignedString(GetSecretByte())
   fatal(err)
   return tokenString, err
 }
@@ -103,7 +103,7 @@ func ValidateHS256Token(tokenString string) (bool, string, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("Unexpected signing method")
 		}
-		return secretByte, nil
+		return GetSecretByte(), nil
 	})
 	
 	if token == nil {

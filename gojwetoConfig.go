@@ -13,20 +13,19 @@ type CertToken struct {
 }
 
 type Credentials struct {
-  Logged bool
-  Token  string
+  Token   string  `json:"Token"`
+  Logged  bool    `json:"Logged"`
 }
 
 const (
   privKey    = "/tls-ssl/jwtkeys/rsakey.pem"
   pubKey     = "/tls-ssl/jwtkeys/rsakey.pem.pub"
-  secretKey  = "Jnzads"
 )
 
 var (
   verifyKey   *rsa.PublicKey
   signingKey  *rsa.PrivateKey
-  secretByte  = []byte(secretKey)
+  secretKey   = "Jnzads"
   pwd, _      = os.Getwd()
 )
 
@@ -34,4 +33,16 @@ func fatal(err error) {
   if err != nil {
     log.Fatal(err)
   }
+}
+
+func SetSecretKey(name string){
+  secretKey = name
+}
+
+func GetSecretKey()(string){
+  return secretKey
+}
+
+func GetSecretByte()([]byte){
+  return []byte(secretKey)
 }
