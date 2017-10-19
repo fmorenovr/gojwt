@@ -1,2 +1,3 @@
 # goJweto
-JWT (JSON Web Token) is a Golang implementation.
+
+goJweto (Golang JSON Web Token) is a Golang implementation for REST service security.
