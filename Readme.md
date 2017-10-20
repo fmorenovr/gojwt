@@ -27,8 +27,10 @@ JWT (JSON Web Token) is a Golang implementation.
       * Then, in your tokenHandler add:
       
         ```go
-          muxHttp.HandleFunc("/settoken", setToken)
-          muxHttp.HandleFunc("/profile", gojweto.MiddlewareGoJwetoHeaders(protectedProfile, NotFoundHandler,"Jnzads-web-JWT"))
+          muxHttp.HandleFunc("/setToken", func(w http.ResponseWriter, r *http.Request) {
+            setToken("usuario-Id", w, r)
+          })
+          muxHttp.HandleFunc("/profile", gojweto.MiddlewareGoJwetoHeaders(YourHandler, NotFoundHandler,"Jnzads-web-JWT"))
         ```
 
     * Using in BeeGo:
