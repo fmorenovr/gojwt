@@ -12,8 +12,12 @@ type CertToken struct {
   Expires int64
 }
 
-type Credentials struct {
+type CredentialsAuth struct {
   Token   string  `json:"Token"`
+  Logged  bool    `json:"Logged"`
+}
+
+type CredentialsNoAuth struct {
   Logged  bool    `json:"Logged"`
 }
 
@@ -26,6 +30,7 @@ var (
   verifyKey   *rsa.PublicKey
   signingKey  *rsa.PrivateKey
   secretKey   = "Jnzads"
+  headerKey   = "Jnzads-JWT"
   pwd, _      = os.Getwd()
 )
 
@@ -35,6 +40,16 @@ func fatal(err error) {
   }
 }
 
+// Header authorization
+func SetHeaderKey(name string){
+  headerKey = name
+}
+
+func GetHeaderKey()(string){
+  return headerKey
+}
+
+// method HS256
 func SetSecretKey(name string){
   secretKey = name
 }
