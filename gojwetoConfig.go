@@ -3,6 +3,7 @@ package gojweto
 import (
   "os";
   "log";
+  "time"
   "crypto/rsa";
 )
 
@@ -27,17 +28,27 @@ const (
 )
 
 var (
-  verifyKey   *rsa.PublicKey
-  signingKey  *rsa.PrivateKey
-  secretKey   = "Jnzads"
-  headerKey   = "Jnzads-JWT"
-  pwd, _      = os.Getwd()
+  verifyKey        *rsa.PublicKey
+  signingKey       *rsa.PrivateKey
+  secretKey        = "Jnzads"
+  headerKey        = "Jnzads-JWT"
+  pwd, _           = os.Getwd()
+  NumHoursDuration time.Duration = 1
 )
 
 func fatal(err error) {
   if err != nil {
     log.Fatal(err)
   }
+}
+
+// hours of duration
+func SetNumHoursDuration(hours time.Duration){
+  NumHoursDuration = hours
+}
+
+func GetNumHoursDuration()(time.Duration){
+  return NumHoursDuration
 }
 
 // Header authorization

@@ -32,7 +32,7 @@ func CreateRS256Token(username string) (string, error) {
   // Create the Claims
   claims := Claims{
     jwt.StandardClaims{
-      ExpiresAt: time.Now().Add(time.Hour * 1).Unix(), //time.Unix(c.ExpiresAt, 0),
+      ExpiresAt: time.Now().Add(time.Hour * GetNumHoursDuration()).Unix(), //time.Unix(c.ExpiresAt, 0),
       Issuer:    username,
     },
   }
@@ -47,7 +47,7 @@ func CreateHS256Token(username string) (string, error) {
   // Create the Claims
   claims := Claims{
     jwt.StandardClaims{
-      ExpiresAt: time.Now().Add(time.Hour * 1).Unix(), //time.Unix(c.ExpiresAt, 0),
+      ExpiresAt: time.Now().Add(time.Hour * GetNumHoursDuration()).Unix(), //time.Unix(c.ExpiresAt, 0),
       Issuer:    username,
     },
   }
