@@ -10,7 +10,7 @@ import (
 
 // JWT schema of the data it will store
 type Claims struct {
-	jwt.StandardClaims
+  jwt.StandardClaims
 }
 
 func initRS256Vars(){
