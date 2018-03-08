@@ -9,11 +9,7 @@ goJweto (Golang JSON Web Token) is a Golang implementation for REST service secu
       openssl genrsa -out rsakey.pem 2048
       openssl rsa -in rsakey.pem -pubout > rsakey.pem.pub
 
-* Next, Install it:
-
-      go get github.com/dgrijalva/jwt-go/
-
-* Once installed, You should download my library:
+* Next, You should download my library:
 
       go get github.com/jenazads/gojweto/
 
