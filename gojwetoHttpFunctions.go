@@ -17,10 +17,10 @@ func JsonResponse(response interface{}, w http.ResponseWriter) {
 }
 
 // middleware gojweto
-func MiddlewareGoJwetoHeaders(pageHandler, noAuthHandler http.HandlerFunc) (http.HandlerFunc) {
+func MiddlewareGoJwetoHeaders(pageHandler, noAuthHandler http.HandlerFunc, o Gojweto) (http.HandlerFunc) {
   return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-    tokenString := r.Header.Get(GetHeaderKey())
-    valid, _, _ := ValidateHS256Token(tokenString)
+    tokenString := r.Header.Get(o.GetHeaderKey())
+    valid, _, _ := o.ValidateToken(tokenString)
     if !valid {
       noAuthHandler(w, r)
       return

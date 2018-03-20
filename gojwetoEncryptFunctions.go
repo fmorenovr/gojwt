@@ -4,67 +4,135 @@ import (
   "fmt";
   "time";
   "errors";
-  "io/ioutil";
   "github.com/dgrijalva/jwt-go";
 )
 
 // JWT schema of the data it will store
 type Claims struct {
+  NameServer   string `json:"nameServer,omitempty"`
   jwt.StandardClaims
 }
 
-func initRS256Vars(){
-  verifyBytes, err := ioutil.ReadFile(pwd+pubKey)
-  fatal(err)
-
-  verifyKey, err = jwt.ParseRSAPublicKeyFromPEM(verifyBytes)
-  fatal(err)
-
-  signBytes, err := ioutil.ReadFile(pwd+privKey)
-  fatal(err)
-
-  signingKey, err = jwt.ParseRSAPrivateKeyFromPEM(signBytes)
-  fatal(err)
+func (o *Gojweto) CreateToken(username string) (tokenString string, err error) {
+  method := o.GetEncryptMethod()
+  lenByte := o.GetEncryptLenBytes()
+  if method == "RSA" {
+    tokenString, err = o.createRSAToken(lenByte, username)
+  } else if method == "ECDSA" {
+    tokenString, err = o.createECDSAToken(lenByte, username)
+  } else if method == "HMAC-SHA" {
+    tokenString, err = o.createHMACSHAToken(lenByte, username)
+  } else {
+    return "", errors.New("Invalid Algorithm")
+  }
+  return tokenString, err
 }
 
-// Create token with RSA256 algorithm
-func CreateRS256Token(username string) (string, error) {
+func (o *Gojweto) ValidateToken(tokenString string) (isValid bool, username string, err error) {
+  method := o.GetEncryptMethod()
+  if method == "RSA" || method == "ECDSA" {
+    isValid, username, err = o.validateECD_RSAToken(tokenString)
+  } else if method == "HMAC-SHA" {
+    isValid, username, err = o.validateHMACSHAToken(tokenString)
+  } else {
+    return false, "", errors.New("Invalid Algorithm")
+  }
+  return isValid, username, err
+}
+
+// Create token with RSA algorithm
+func (o *Gojweto) createRSAToken(lenBytes, username string) (string, error) {
+  var token *jwt.Token
   // Create the Claims
   claims := Claims{
+    o.GetNameServer(),
     jwt.StandardClaims{
-      ExpiresAt: time.Now().Add(time.Hour * GetNumHoursDuration()).Unix(), //time.Unix(c.ExpiresAt, 0),
+      ExpiresAt: time.Now().Add(time.Hour * o.GetNumHoursDuration()).Unix(), //time.Unix(c.ExpiresAt, 0),
       Issuer:    username,
+      IssuedAt: time.Now().Unix(),
     },
   }
-  token := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
-  tokenString, err := token.SignedString(signingKey)
+  if lenBytes == "256" {
+    token = jwt.NewWithClaims(jwt.SigningMethodRS256, claims)
+  } else if lenBytes == "384"{
+    token = jwt.NewWithClaims(jwt.SigningMethodRS384, claims)
+  } else if lenBytes == "512"{
+    token = jwt.NewWithClaims(jwt.SigningMethodRS512, claims)
+  } else {
+    return "", errors.New("Invalid Algorithm")
+  }
+  tokenString, err := token.SignedString(o.GetRSAPrivKey())
   fatal(err)
   return tokenString, err
 }
 
-// Create token with HSA256 algorithm
-func CreateHS256Token(username string) (string, error) {
+// Create token with ECDSA algorithm
+func (o *Gojweto) createECDSAToken(lenBytes, username string) (string, error) {
+  var token *jwt.Token
   // Create the Claims
   claims := Claims{
+    o.GetNameServer(),
     jwt.StandardClaims{
-      ExpiresAt: time.Now().Add(time.Hour * GetNumHoursDuration()).Unix(), //time.Unix(c.ExpiresAt, 0),
+      ExpiresAt: time.Now().Add(time.Hour * o.GetNumHoursDuration()).Unix(), //time.Unix(c.ExpiresAt, 0),
       Issuer:    username,
+      IssuedAt: time.Now().Unix(),
     },
   }
-  token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-  tokenString, err := token.SignedString(GetSecretByte())
+  if lenBytes == "256" {
+    token = jwt.NewWithClaims(jwt.SigningMethodES256, claims)
+  } else if lenBytes == "384"{
+    token = jwt.NewWithClaims(jwt.SigningMethodES384, claims)
+  //} else if lenBytes == "512"{
+  //  token = jwt.NewWithClaims(jwt.SigningMethodES512, claims)
+  } else {
+    return "", errors.New("Invalid Algorithm")
+  }
+  tokenString, err := token.SignedString(o.GetECDSAPrivKey())
   fatal(err)
   return tokenString, err
 }
 
-// Validate Token RS256 algorithm
-func ValidateRS256Token(tokenString string) (bool, string, error) {
+// Create token with HMAC-SHA algorithm
+func (o *Gojweto) createHMACSHAToken(lenBytes, username string) (string, error) {
+  var token *jwt.Token
+  // Create the Claims
+  claims := Claims{
+    o.GetNameServer(),
+    jwt.StandardClaims{
+      ExpiresAt: time.Now().Add(time.Hour * o.GetNumHoursDuration()).Unix(), //time.Unix(c.ExpiresAt, 0),
+      Issuer:    username,
+      IssuedAt: time.Now().Unix(),
+    },
+  }
+  if lenBytes == "256"{
+    token = jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+  } else if lenBytes == "384"{
+    token = jwt.NewWithClaims(jwt.SigningMethodHS384, claims)
+  } else if lenBytes == "512"{
+    token = jwt.NewWithClaims(jwt.SigningMethodHS512, claims)
+  } else {
+    return "", errors.New("Invalid Algorithm")
+  }
+  tokenString, err := token.SignedString(o.GetSecretByte())
+  fatal(err)
+  return tokenString, err
+}
+
+// Validate Token RSA/ECDSA algorithm
+func (o *Gojweto) validateECD_RSAToken(tokenString string) (bool, string, error) {
+  method := o.GetEncryptMethod()
   if tokenString == "" {
     return false, "", errors.New("token is empty")
   }
 
   token, err := jwt.Parse(tokenString,func(token *jwt.Token) (interface{}, error) {
-    return verifyKey, nil
+    if method == "RSA"{
+      return o.GetRSAPubKey(), nil
+    } else if method == "ECDSA" {
+      return o.GetECDSAPubKey(), nil
+    } else {
+      return nil, errors.New("token invalid")
+    }
   })
 
   if token == nil {
@@ -93,8 +161,8 @@ func ValidateRS256Token(tokenString string) (bool, string, error) {
   }
 }
 
-// Validate Token HS256 algorithm
-func ValidateHS256Token(tokenString string) (bool, string, error) {
+// Validate Token HMAC-SHA algorithm
+func (o *Gojweto) validateHMACSHAToken(tokenString string) (bool, string, error) {
   if tokenString == "" {
     return false, "", errors.New("token is empty")
   }
@@ -103,7 +171,7 @@ func ValidateHS256Token(tokenString string) (bool, string, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("Unexpected signing method")
 		}
-		return GetSecretByte(), nil
+		return o.GetSecretByte(), nil
 	})
 	
 	if token == nil {
