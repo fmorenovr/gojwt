@@ -1,7 +1,9 @@
 package gojweto
 
-import "errors"
-
+import (
+  "errors"
+)
+  
 var(
   ErrInvalidEmptyToken   = errors.New("Invalid Empty Token")
   ErrInvalidAlgorithm    = errors.New("Invalid Algorithm to create token")
