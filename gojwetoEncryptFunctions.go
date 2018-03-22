@@ -3,7 +3,6 @@ package gojweto
 import (
   "fmt";
   "time";
-  "errors";
   "github.com/dgrijalva/jwt-go";
 )
 
