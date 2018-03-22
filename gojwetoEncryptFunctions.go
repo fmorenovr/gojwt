@@ -13,6 +13,7 @@ type Claims struct {
   jwt.StandardClaims
 }
 
+// Create token with a specific encrypt method
 func (o *Gojweto) CreateToken(username string) (tokenString string, err error) {
   method := o.GetEncryptMethod()
   lenByte := o.GetEncryptLenBytes()
@@ -28,6 +29,7 @@ func (o *Gojweto) CreateToken(username string) (tokenString string, err error) {
   return tokenString, err
 }
 
+// validate token with a specific encrypt method
 func (o *Gojweto) ValidateToken(tokenString string) (isValid bool, username string, err error) {
   method := o.GetEncryptMethod()
   if method == "RSA" || method == "ECDSA" {
