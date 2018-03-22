@@ -131,12 +131,12 @@ func (o *Gojweto) validateECD_RSAToken(tokenString string) (bool, string, error)
     } else if method == "ECDSA" {
       return o.GetECDSAPubKey(), nil
     } else {
-      return nil, errors.New("token invalid")
+      return nil, ErrInvalidToken
     }
   })
 
   if token == nil {
-    return false, "", errors.New("not work")
+    return false, "", ErrNotWorkToken
   }
 
   if token.Valid {
@@ -147,10 +147,10 @@ func (o *Gojweto) validateECD_RSAToken(tokenString string) (bool, string, error)
     return true, iss, nil
   } else if ve, ok := err.(*jwt.ValidationError); ok {
     if ve.Errors&jwt.ValidationErrorMalformed != 0 {
-      return false, "", errors.New("That's not even a token")
+      return false, "", ErrBadFormatToken
     } else if ve.Errors&(jwt.ValidationErrorExpired|jwt.ValidationErrorNotValidYet) != 0 {
       // Token is either expired or not active yet
-      return false, "", errors.New("Timing is everything")
+      return false, "", ErrTokenExpired
     } else {
       //"Couldn't handle this token:"
       return false, "", err
@@ -175,7 +175,7 @@ func (o *Gojweto) validateHMACSHAToken(tokenString string) (bool, string, error)
 	})
 	
 	if token == nil {
-    return false, "", errors.New("not work")
+    return false, "", ErrNotWorkToken
   }
   
   if token.Valid {
@@ -186,10 +186,10 @@ func (o *Gojweto) validateHMACSHAToken(tokenString string) (bool, string, error)
     return true, iss, err
   } else if ve, ok := err.(*jwt.ValidationError); ok {
     if ve.Errors&jwt.ValidationErrorMalformed != 0 {
-      return false, "", errors.New("That's not even a token")
+      return false, "", ErrBadFormatToken
     } else if ve.Errors&(jwt.ValidationErrorExpired|jwt.ValidationErrorNotValidYet) != 0 {
       // Token is either expired or not active yet
-      return false, "", errors.New("Timing is everything")
+      return false, "", ErrTokenExpired
     } else {
       //"Couldn't handle this token:"
       return false, "", err
