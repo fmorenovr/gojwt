@@ -23,7 +23,7 @@ func (o *Gojweto) CreateToken(username string) (tokenString string, err error) {
   } else if method == "HMAC-SHA" {
     tokenString, err = o.createHMACSHAToken(lenByte, username)
   } else {
-    return "", errors.New("Invalid Algorithm")
+    return "", ErrInvalidAlgorithm
   }
   return tokenString, err
 }
@@ -35,7 +35,7 @@ func (o *Gojweto) ValidateToken(tokenString string) (isValid bool, username stri
   } else if method == "HMAC-SHA" {
     isValid, username, err = o.validateHMACSHAToken(tokenString)
   } else {
-    return false, "", errors.New("Invalid Algorithm")
+    return false, "", ErrInvalidEmptyToken
   }
   return isValid, username, err
 }
@@ -59,7 +59,7 @@ func (o *Gojweto) createRSAToken(lenBytes, username string) (string, error) {
   } else if lenBytes == "512"{
     token = jwt.NewWithClaims(jwt.SigningMethodRS512, claims)
   } else {
-    return "", errors.New("Invalid Algorithm")
+    return "", ErrInvalidRSABytes
   }
   tokenString, err := token.SignedString(o.GetRSAPrivKey())
   fatal(err)
@@ -85,7 +85,7 @@ func (o *Gojweto) createECDSAToken(lenBytes, username string) (string, error) {
   //} else if lenBytes == "512"{
   //  token = jwt.NewWithClaims(jwt.SigningMethodES512, claims)
   } else {
-    return "", errors.New("Invalid Algorithm")
+    return "", ErrInvalidECDSABytes
   }
   tokenString, err := token.SignedString(o.GetECDSAPrivKey())
   fatal(err)
@@ -111,7 +111,7 @@ func (o *Gojweto) createHMACSHAToken(lenBytes, username string) (string, error) 
   } else if lenBytes == "512"{
     token = jwt.NewWithClaims(jwt.SigningMethodHS512, claims)
   } else {
-    return "", errors.New("Invalid Algorithm")
+    return "", ErrInvalidHMACHSABytes
   }
   tokenString, err := token.SignedString(o.GetSecretByte())
   fatal(err)
@@ -122,7 +122,7 @@ func (o *Gojweto) createHMACSHAToken(lenBytes, username string) (string, error) 
 func (o *Gojweto) validateECD_RSAToken(tokenString string) (bool, string, error) {
   method := o.GetEncryptMethod()
   if tokenString == "" {
-    return false, "", errors.New("token is empty")
+    return false, "", ErrInvalidEmptyToken
   }
 
   token, err := jwt.Parse(tokenString,func(token *jwt.Token) (interface{}, error) {
@@ -164,7 +164,7 @@ func (o *Gojweto) validateECD_RSAToken(tokenString string) (bool, string, error)
 // Validate Token HMAC-SHA algorithm
 func (o *Gojweto) validateHMACSHAToken(tokenString string) (bool, string, error) {
   if tokenString == "" {
-    return false, "", errors.New("token is empty")
+    return false, "", ErrInvalidEmptyToken
   }
   
   token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
