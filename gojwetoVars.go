@@ -15,9 +15,3 @@ type CredentialsNoAuth struct {
   Logged  bool    `json:"Logged"`
 }
 
-// func to evaluate Err
-func fatal(err error) {
-  if err != nil {
-    log.Fatal(err)
-  }
-}
