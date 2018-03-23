@@ -3,6 +3,7 @@ package gojweto
 import (
   "os";
   "time";
+  "errors";
   "io/ioutil";
   "crypto/rsa";
   "crypto/ecdsa";
@@ -119,7 +120,7 @@ func NewGojwetoOptions(privKeyPath, pubKeyPath, nameserver, secretkey, headerkey
          lenBytes: bytes,
          nameServer: nameserver}, nil
   } else if method == "HMAC-SHA" {
-    if secretKey == "" {
+    if secretkey == "" {
       return nil, ErrInvalidEmptySecretKey
     }
     return &Gojweto{
