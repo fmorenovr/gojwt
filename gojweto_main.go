@@ -2,7 +2,7 @@ package gojweto
 
 import (
   "fmt";
-  "github.com/jenazads/gojweto";
+  //"github.com/jenazads/gojweto";
 )
 
 var (
