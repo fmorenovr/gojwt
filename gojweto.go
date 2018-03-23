@@ -67,7 +67,7 @@ func prepareECDSAKeys(privECDSAPath, pubECDSAPath string)(*ecdsa.PublicKey, *ecd
 }
 
 // Create a New GoJweto Instance with HMAC-SHA encrypt method by default
-func NewGojweto() (*Gojweto, err){
+func NewGojweto() (*Gojweto, error){
 
   return &Gojweto{
          secretKeyWord: "Jnzads",
@@ -79,7 +79,7 @@ func NewGojweto() (*Gojweto, err){
 }
 
 // Create a New GoJweto Instance with an encrypt method with parameters as you wish
-func NewGojwetoOptions(privKeyPath, pubKeyPath, nameserver, secretkey, headerkey, method, bytes string, hours time.Duration) (*Gojweto, err){
+func NewGojwetoOptions(privKeyPath, pubKeyPath, nameserver, secretkey, headerkey, method, bytes string, hours time.Duration) (*Gojweto, error){
   var verifiedRSAKey   *rsa.PublicKey
   var signedRSAKey     *rsa.PrivateKey
   var verifiedECDSAKey *ecdsa.PublicKey
