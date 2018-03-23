@@ -1,8 +1,14 @@
-# goJweto
+# golang + JWT = goJweto
 
-goJweto (Golang JSON Web Token) is a Golang implementation for REST service security.  
+goJweto (Golang for JSON Web Token) is a Golang implementation for REST service security.  
 You can see an extended doc in [godocs](https://godoc.org/github.com/Jenazads/goJweto).
-  
+
+## JWT
+
+JWT (JSON Web Token) is a standard to make secure a connection in a compact URL-safe means of representing claims to be transferred between two parties.
+
+## goJweto
+
 * First, You should create your RSA key pairs.  
   Create `/tls-ssl/jwtkeys/` directory in your root path of your project:
 
