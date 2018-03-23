@@ -6,7 +6,7 @@ import (
 )
 
 // main function with hello world in goJweto
-func main() {
+func Example_createGoJwetoObjects() {
   var (
     privECDSAKeyPath = "asdsa"
     pubECDSAKeyPath  = ""
@@ -24,4 +24,8 @@ func main() {
 
   GojwtObject, err = gojweto.NewGojwetoOptions(privRSAKeyPath, pubRSAKeyPath, "JnzadsServer", "jnzads-rest", "Jnzads-rest-JWT", "RSA", "256", 24)
   fmt.Println("Example with empty secret Key and RSA/ECDSA method: ", GojwtObject, "with error: ", err)
+}
+
+func main(){
+  Example_createGoJwetoObjects()
 }
