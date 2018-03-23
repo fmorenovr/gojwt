@@ -86,9 +86,9 @@ func NewGojwetoOptions(privKeyPath, pubKeyPath, nameserver, secretkey, headerkey
   
   if method == "RSA" {
     if privKeyPath == "" {
-      return nil, ErrInvalidEmptyPrivateKey
+      return nil, GojwetoErrInvalidEmptyPrivateKey
     } else if pubKeyPath == "" {
-      return nil, ErrInvalidEmptyPublicKey
+      return nil, GojwetoErrInvalidEmptyPublicKey
     }
     verifiedRSAKey, signedRSAKey = prepareRSAKeys(privKeyPath, pubKeyPath)
     return &Gojweto{
@@ -103,9 +103,9 @@ func NewGojwetoOptions(privKeyPath, pubKeyPath, nameserver, secretkey, headerkey
          nameServer: nameserver}, nil
   } else if method == "ECDSA" {
     if privKeyPath == "" {
-      return nil, ErrInvalidEmptyPrivateKey
+      return nil, GojwetoErrInvalidEmptyPrivateKey
     } else if pubKeyPath == "" {
-      return nil, ErrInvalidEmptyPublicKey
+      return nil, GojwetoErrInvalidEmptyPublicKey
     }
     verifiedECDSAKey, signedECDSAKey = prepareECDSAKeys(privKeyPath, pubKeyPath)
     return &Gojweto{
@@ -120,7 +120,7 @@ func NewGojwetoOptions(privKeyPath, pubKeyPath, nameserver, secretkey, headerkey
          nameServer: nameserver}, nil
   } else if method == "HMAC-SHA" {
     if secretkey == "" {
-      return nil, ErrInvalidEmptySecretKey
+      return nil, GojwetoErrInvalidEmptySecretKey
     }
     return &Gojweto{
          secretKeyWord: secretkey,
