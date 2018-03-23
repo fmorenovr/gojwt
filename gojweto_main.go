@@ -1,4 +1,4 @@
-package gojweto_main
+package gojweto
 
 import (
   "fmt";
