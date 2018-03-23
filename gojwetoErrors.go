@@ -6,6 +6,7 @@ import (
 )
 
 var(
+  ErrInvalidEmptySecretKey   = errors.New("Invalid Empty Secret Key")
   ErrInvalidEmptyPrivateKey  = errors.New("Invalid Empty Path Private Key")
   ErrInvalidEmptyPublicKey   = errors.New("Invalid Empty Path Public Key")
   ErrInvalidEmptyToken       = errors.New("Invalid Empty Token")
