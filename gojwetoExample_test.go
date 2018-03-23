@@ -23,9 +23,9 @@ func VerifyLogin(ob Login)(bool,error){
 func Example_loginHandler(w http.ResponseWriter, r *http.Request) {
   // gojweto: path of priv, pub, nameServer, secretKey, headerAuth, method, bytesmethod, time exp (hours)
   // This var must be global and could be modify using Sets and Gets methods
-  //var GojwtObject = gojweto.NewGojwetoOptions("", "", "gojwetoServer", "secretKey", "Auth-gojweto", "HMAC-SHA", "512", 24)
-  var GojwtObject = gojweto.NewGojwetoOptions(privECDSAKeyPath, pubECDSAKeyPath, "gojwetoServer", "", "Auth-gojweto", "ECDSA", "384", 24)
-  //var GojwtObject = gojweto.NewGojwetoOptions(privRSAKeyPath, pubRSAKeyPath, "gojwetoServer", "", "Auth-gojweto", "RSA", "256", 24)
+  //GojwtObject, _ := gojweto.NewGojwetoOptions("", "", "gojwetoServer", "secretKey", "Auth-gojweto", "HMAC-SHA", "512", 24)
+  GojwtObject, _ := gojweto.NewGojwetoOptions(privECDSAKeyPath, pubECDSAKeyPath, "gojwetoServer", "", "Auth-gojweto", "ECDSA", "384", 24)
+  //GojwtObject, _ := gojweto.NewGojwetoOptions(privRSAKeyPath, pubRSAKeyPath, "gojwetoServer", "", "Auth-gojweto", "RSA", "256", 24)
   var ob Login
   ob.Username = r.FormValue("username")
   ob.Password = r.FormValue("password")
