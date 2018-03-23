@@ -3,7 +3,6 @@ package gojweto
 import (
   "os";
   "time";
-  "errors";
   "io/ioutil";
   "crypto/rsa";
   "crypto/ecdsa";
