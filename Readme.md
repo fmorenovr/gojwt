@@ -5,7 +5,8 @@ You can see an extended doc in [godocs](https://godoc.org/github.com/Jenazads/go
 
 ## JWT
 
-JWT (JSON Web Token) is a standard to make secure a connection in a compact URL-safe means of representing claims to be transferred between two parties.
+JWT (JSON Web Token) is a standard to make secure a connection in a compact URL-safe means of representing claims to be transferred between two parties.  
+See more info [here](https://jwt.io).
 
 ## goJweto
 
