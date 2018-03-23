@@ -66,57 +66,69 @@ func prepareECDSAKeys(privECDSAPath, pubECDSAPath string)(*ecdsa.PublicKey, *ecd
 }
 
 // Create a New GoJweto Instance with HMAC-SHA encrypt method by default
-func NewGojweto() (Gojweto){
+func NewGojweto() (*Gojweto, err){
 
-  return Gojweto{
+  return &Gojweto{
          secretKeyWord: "Jnzads",
          headerKeyAuth: "Jnzads-JWT",
          numHoursDuration: 1,
          method: "HMAC-SHA",
          lenBytes: "256",
-         nameServer: "JnzadsServer"}
+         nameServer: "JnzadsServer"}, nil
 }
 
 // Create a New GoJweto Instance with an encrypt method with parameters as you wish
-func NewGojwetoOptions(privKeyPath, pubKeyPath, nameserver, secretkey, headerkey, method, bytes string, hours time.Duration) (Gojweto){
+func NewGojwetoOptions(privKeyPath, pubKeyPath, nameserver, secretkey, headerkey, method, bytes string, hours time.Duration) (*Gojweto, err){
   var verifiedRSAKey   *rsa.PublicKey
   var signedRSAKey     *rsa.PrivateKey
   var verifiedECDSAKey *ecdsa.PublicKey
   var signedECDSAKey   *ecdsa.PrivateKey
+  
   if method == "RSA" {
+    if privKeyPath == "" {
+      return nil, ErrInvalidEmptyPrivateKey
+    } else if pubKeyPath == "" {
+      return nil, ErrInvalidEmptyPublicKey
+    }
     verifiedRSAKey, signedRSAKey = prepareRSAKeys(privKeyPath, pubKeyPath)
-    return Gojweto{
+    return &Gojweto{
          pubRSAPath: pubKeyPath,
          privRSAPath: privKeyPath,
          pubRSAKey: verifiedRSAKey,
          privRSAKey: signedRSAKey,
-         secretKeyWord: secretkey,
          headerKeyAuth: headerkey,
          numHoursDuration: hours,
          method: method,
          lenBytes: bytes,
-         nameServer: nameserver}
+         nameServer: nameserver}, nil
   } else if method == "ECDSA" {
+    if privKeyPath == "" {
+      return nil, ErrInvalidEmptyPrivateKey
+    } else if pubKeyPath == "" {
+      return nil, ErrInvalidEmptyPublicKey
+    }
     verifiedECDSAKey, signedECDSAKey = prepareECDSAKeys(privKeyPath, pubKeyPath)
-    return Gojweto{
+    return &Gojweto{
          pubECDSAPath: pubKeyPath,
          privECDSAPath: privKeyPath,
          pubECDSAKey: verifiedECDSAKey,
          privECDSAKey: signedECDSAKey,
-         secretKeyWord: secretkey,
          headerKeyAuth: headerkey,
          numHoursDuration: hours,
          method: method,
          lenBytes: bytes,
-         nameServer: nameserver}
+         nameServer: nameserver}, nil
   } else if method == "HMAC-SHA" {
-    return Gojweto{
+    if secretKey == "" {
+      return nil, ErrInvalidEmptySecretKey
+    }
+    return &Gojweto{
          secretKeyWord: secretkey,
          headerKeyAuth: headerkey,
          numHoursDuration: hours,
          method: method,
          lenBytes: bytes,
-         nameServer: nameserver}
+         nameServer: nameserver}, nil
   } else {
     return NewGojweto()
   }
