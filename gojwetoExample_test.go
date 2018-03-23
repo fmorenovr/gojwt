@@ -25,7 +25,7 @@ var GojwtObject = gojweto.NewGojwetoOptions(privECDSAKeyPath, pubECDSAKeyPath, "
 //var GojwtObject = gojweto.NewGojwetoOptions(privRSAKeyPath, pubRSAKeyPath, "gojwetoServer", "", "Auth-gojweto", "RSA", "256", 24)
 
 // How to use goJweto middleware in gorilla or http/net package
-func Example_LoginHandler(w http.ResponseWriter, r *http.Request) {
+func Example_loginHandler(w http.ResponseWriter, r *http.Request) {
   var ob Login
   ob.Username = r.FormValue("username")
   ob.Password = r.FormValue("password")
@@ -45,7 +45,7 @@ func Example_LoginHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // Web to Create a JWT and put in the clients cookie
-func Example_SetTokenHandler(w http.ResponseWriter, r *http.Request) {
+func Example_setTokenHandler(w http.ResponseWriter, r *http.Request) {
   const indexPage = `<h1>Login</h1>
     <form method="post" action="/login">
       <label for="name">User name</label>
