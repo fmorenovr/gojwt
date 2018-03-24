@@ -1,9 +1,9 @@
-package gojweto_test
+package gojwt_test
 
 import (
   "net/http";
   "fmt";
-  "github.com/jenazads/gojweto";
+  "github.com/jenazads/gojwt";
 )
 
 type Login struct{
@@ -19,27 +19,27 @@ func VerifyLogin(ob Login)(bool,error){
   }
 }
 
-// How to use goJweto middleware in gorilla or http/net package
+// How to use goJwt middleware in gorilla or http/net package
 func Example_loginHandler(w http.ResponseWriter, r *http.Request) {
-  // gojweto: path of priv, pub, nameServer, secretKey, headerAuth, method, bytesmethod, time exp (hours)
+  // gojwt: path of priv, pub, nameServer, secretKey, headerAuth, method, bytesmethod, time exp (hours)
   // This var must be global and could be modify using Sets and Gets methods
-  //GojwtObject, _ := gojweto.NewGojwetoOptions("", "", "gojwetoServer", "secretKey", "Auth-gojweto", "HMAC-SHA", "512", 24)
-  GojwtObject, _ := gojweto.NewGojwetoOptions(privECDSAKeyPath, pubECDSAKeyPath, "gojwetoServer", "", "Auth-gojweto", "ECDSA", "384", 24)
-  //GojwtObject, _ := gojweto.NewGojwetoOptions(privRSAKeyPath, pubRSAKeyPath, "gojwetoServer", "", "Auth-gojweto", "RSA", "256", 24)
+  //GojwtObject, _ := gojwt.NewGojwtOptions("", "", "gojwetoServer", "secretKey", "Auth-gojweto", "HMAC-SHA", "512", 24)
+  GojwtObject, _ := gojwt.NewGojwtOptions(privECDSAKeyPath, pubECDSAKeyPath, "gojwetoServer", "", "Auth-gojweto", "ECDSA", "384", 24)
+  //GojwtObject, _ := gojwt.NewGojwtOptions(privRSAKeyPath, pubRSAKeyPath, "gojwetoServer", "", "Auth-gojweto", "RSA", "256", 24)
   var ob Login
   ob.Username = r.FormValue("username")
   ob.Password = r.FormValue("password")
   objectid, err := VerifyLogin(ob)
   if err != nil {
-    gojweto.JsonResponse(err.Error(),w)
+    gojwt.JsonResponse(err.Error(),w)
 	} else {
     if objectid {
 	    tokenString, _ := GojwtObject.CreateToken(ob.Username)
-	    dataJSON := gojweto.CredentialsAuth{Token: tokenString, Logged: objectid}
-      gojweto.JsonResponse(dataJSON, w)
+	    dataJSON := gojwt.CredentialsAuth{Token: tokenString, Logged: objectid}
+      gojwt.JsonResponse(dataJSON, w)
     } else {
-      dataJSON := gojweto.CredentialsNoAuth{Logged: objectid}
-      gojweto.JsonResponse(dataJSON, w)
+      dataJSON := gojwt.CredentialsNoAuth{Logged: objectid}
+      gojwt.JsonResponse(dataJSON, w)
     }
   }
 }

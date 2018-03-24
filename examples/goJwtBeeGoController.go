@@ -5,12 +5,12 @@ import (
   "github.com/astaxie/beego";
 )
 
-type GoJwetoController struct {
+type GoJwtController struct {
   beego.Controller
 }
 
 // Prepare, executes before Http Methods
-func (o *GoJwetoController) Prepare() {
+func (o *GoJwtController) Prepare() {
   tokenString := o.Ctx.Request.Header.Get(models.GojwtObject.GetHeaderKey())
   //tokenString := c.Ctx.Input.Query("tokenString")
   valido, _, _ := models.GojwtObject.ValidateToken(tokenString)

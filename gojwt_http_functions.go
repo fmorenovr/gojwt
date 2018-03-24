@@ -1,4 +1,4 @@
-package gojweto
+package gojwt
 
 import (
   "net/http";
@@ -16,8 +16,8 @@ func JsonResponse(response interface{}, w http.ResponseWriter) {
   w.Write(json)
 }
 
-// middleware gojweto
-func MiddlewareGoJwetoHeaders(pageHandler, noAuthHandler http.HandlerFunc, o Gojweto) (http.HandlerFunc) {
+// middleware gojwt
+func MiddlewareGojwtHeaders(pageHandler, noAuthHandler http.HandlerFunc, o Gojwt) (http.HandlerFunc) {
   return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
     tokenString := r.Header.Get(o.GetHeaderKey())
     valid, _, _ := o.ValidateToken(tokenString)

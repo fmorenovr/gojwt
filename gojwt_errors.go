@@ -1,4 +1,4 @@
-package gojweto
+package gojwt
 
 import (
   "log";
@@ -6,18 +6,18 @@ import (
 )
 
 var(
-  GojwetoErrInvalidEmptySecretKey   = errors.New("Invalid Empty Secret Key")
-  GojwetoErrInvalidEmptyPrivateKey  = errors.New("Invalid Empty Path Private Key")
-  GojwetoErrInvalidEmptyPublicKey   = errors.New("Invalid Empty Path Public Key")
-  GojwetoErrInvalidEmptyToken       = errors.New("Invalid Empty Token")
-  GojwetoErrInvalidAlgorithm        = errors.New("Invalid Algorithm to create token")
-  GojwetoErrInvalidRSABytes         = errors.New("Invalid RSA len bytes Algorithm")
-  GojwetoErrInvalidECDSABytes       = errors.New("Invalid ECDSA len bytes Algorithm")
-  GojwetoErrInvalidHMACHSABytes     = errors.New("Invalid HMAC-SHA len bytes Algorithm")
-  GojwetoErrInvalidToken            = errors.New("Invalid Token")
-  GojwetoErrBadFormatToken          = errors.New("Invalid Format Token")
-  GojwetoErrTokenExpired            = errors.New("Invalid Token is Expired")
-  GojwetoErrNotWorkToken            = errors.New("Invalid Token is not working")
+  GojwtErrInvalidEmptySecretKey   = errors.New("Invalid Empty Secret Key")
+  GojwtErrInvalidEmptyPrivateKey  = errors.New("Invalid Empty Path Private Key")
+  GojwtErrInvalidEmptyPublicKey   = errors.New("Invalid Empty Path Public Key")
+  GojwtErrInvalidEmptyToken       = errors.New("Invalid Empty Token")
+  GojwtErrInvalidAlgorithm        = errors.New("Invalid Algorithm to create token")
+  GojwtErrInvalidRSABytes         = errors.New("Invalid RSA len bytes Algorithm")
+  GojwtErrInvalidECDSABytes       = errors.New("Invalid ECDSA len bytes Algorithm")
+  GojwtErrInvalidHMACHSABytes     = errors.New("Invalid HMAC-SHA len bytes Algorithm")
+  GojwtErrInvalidToken            = errors.New("Invalid Token")
+  GojwtErrBadFormatToken          = errors.New("Invalid Format Token")
+  GojwtErrTokenExpired            = errors.New("Invalid Token is Expired")
+  GojwtErrNotWorkToken            = errors.New("Invalid Token is not working")
 )
 
 // func to evaluate Err

@@ -1,4 +1,4 @@
-package gojweto
+package gojwt
 
 // Struct to encapsulate if the username is not logged
 type CredentialsAuth struct {

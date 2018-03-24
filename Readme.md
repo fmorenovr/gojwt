@@ -1,14 +1,14 @@
-# golang + JWT = goJweto
+# golang + JWT = goJwt (GoJweto)
 
-goJweto (Golang for JSON Web Token) is a Golang implementation for REST service security.  
-You can see an extended doc in [godocs](https://godoc.org/github.com/Jenazads/goJweto).
+goJwt (Golang for JSON Web Token) is a Golang implementation for REST service security.  
+You can see an extended doc in [godocs](https://godoc.org/github.com/Jenazads/goJwt).
 
 ## JWT
 
 JWT (JSON Web Token) is a standard to make secure a connection in a compact URL-safe means of representing claims to be transferred between two parties.  
 See more info [here](https://jwt.io).
 
-## goJweto
+## goJwt
 
 * First, You should create your RSA key pairs.  
   Create `/tls-ssl/jwtkeys/` directory in your root path of your project:
@@ -32,15 +32,15 @@ See more info [here](https://jwt.io).
 
 * Next, You should download my library:
 
-      go get github.com/jenazads/gojweto/
+      go get github.com/jenazads/gojwt/
 
 * Then, you should use for differents Web Frameworks in Go.
         
-    * First, Create a gojweto object, specifying privKeypath, pubKeyPath, nameServer, secretKey, headerAuth in request, algorithm, bytes, and expiration time (in hours).
+    * First, Create a gojwt object, specifying privKeypath, pubKeyPath, nameServer, secretKey, headerAuth in request, algorithm, bytes, and expiration time (in hours).
     
-            var GojwtObject, _ = gojweto.NewGojwetoOptions("", "", "JnzadsServer", "jnzads-rest", "Jnzads-rest-JWT", "HMAC-SHA", "512", 24)
-            var GojwtObject, _ = gojweto.NewGojwetoOptions(privECDSAKeyPath, pubECDSAKeyPath, "JnzadsServer", "jnzads-rest", "Jnzads-rest-JWT", "ECDSA", "384", 24)
-            var GojwtObject, _ = gojweto.NewGojwetoOptions(privRSAKeyPath, pubRSAKeyPath, "JnzadsServer", "jnzads-rest", "Jnzads-rest-JWT", "RSA", "256", 24)
+            var GojwtObject, _ = gojwt.NewGojwtOptions("", "", "JnzadsServer", "jnzads-rest", "Jnzads-rest-JWT", "HMAC-SHA", "512", 24)
+            var GojwtObject, _ = gojwt.NewGojwtOptions(privECDSAKeyPath, pubECDSAKeyPath, "JnzadsServer", "jnzads-rest", "Jnzads-rest-JWT", "ECDSA", "384", 24)
+            var GojwtObject, _ = gojwt.NewGojwtOptions(privRSAKeyPath, pubRSAKeyPath, "JnzadsServer", "jnzads-rest", "Jnzads-rest-JWT", "RSA", "256", 24)
     
         
     * Then, generate the token string specifyind a nameserver and username:
@@ -49,19 +49,19 @@ See more info [here](https://jwt.io).
 
     * Using in Go net/http package:
       
-      * Add `examples/goJwetoHandler.go` in your controllers directory.
+      * Add `examples/goJwtHandler.go` in your controllers directory.
       
       * Then, in your muxServe add:
       
         ```go
           muxHttp.HandleFunc("/setToken", setTokenHandler)
           muxHttp.HandleFunc("/login", LoginHandler)
-          muxHttp.HandleFunc("/profile", gojweto.MiddlewareGoJwetoHeaders(WithAuthHandler, NoAuthHandler))
+          muxHttp.HandleFunc("/profile", gojwt.MiddlewareGojwtHeaders(WithAuthHandler, NoAuthHandler))
         ```
 
     * Using in BeeGo:
     
-      * Add `examples/goJwetoBeeGoController.go` in your controllers directory.
+      * Add `examples/goJwtBeeGoController.go` in your controllers directory.
         
       * And, in other controllers, add your new controller instead beegoController.
       
@@ -74,6 +74,6 @@ See more info [here](https://jwt.io).
 
             type AlertController struct {
 	            //beego.Controller
-	            GoJwetoController
+	            GoJwtController
             }
         ```

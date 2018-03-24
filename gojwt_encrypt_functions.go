@@ -1,4 +1,4 @@
-package gojweto
+package gojwt
 
 import (
   "fmt";
@@ -13,7 +13,7 @@ type Claims struct {
 }
 
 // Create token with a specific encrypt method
-func (o *Gojweto) CreateToken(username string) (tokenString string, err error) {
+func (o *Gojwt) CreateToken(username string) (tokenString string, err error) {
   method := o.GetEncryptMethod()
   lenByte := o.GetEncryptLenBytes()
   if method == "RSA" {
@@ -23,26 +23,26 @@ func (o *Gojweto) CreateToken(username string) (tokenString string, err error) {
   } else if method == "HMAC-SHA" {
     tokenString, err = o.createHMACSHAToken(lenByte, username)
   } else {
-    return "", GojwetoErrInvalidAlgorithm
+    return "", GojwtErrInvalidAlgorithm
   }
   return tokenString, err
 }
 
 // validate token with a specific encrypt method
-func (o *Gojweto) ValidateToken(tokenString string) (isValid bool, username string, err error) {
+func (o *Gojwt) ValidateToken(tokenString string) (isValid bool, username string, err error) {
   method := o.GetEncryptMethod()
   if method == "RSA" || method == "ECDSA" {
     isValid, username, err = o.validateECD_RSAToken(tokenString)
   } else if method == "HMAC-SHA" {
     isValid, username, err = o.validateHMACSHAToken(tokenString)
   } else {
-    return false, "", GojwetoErrInvalidEmptyToken
+    return false, "", GojwtErrInvalidEmptyToken
   }
   return isValid, username, err
 }
 
 // Create token with RSA algorithm
-func (o *Gojweto) createRSAToken(lenBytes, username string) (string, error) {
+func (o *Gojwt) createRSAToken(lenBytes, username string) (string, error) {
   var token *jwt.Token
   // Create the Claims
   claims := Claims{
@@ -60,7 +60,7 @@ func (o *Gojweto) createRSAToken(lenBytes, username string) (string, error) {
   } else if lenBytes == "512"{
     token = jwt.NewWithClaims(jwt.SigningMethodRS512, claims)
   } else {
-    return "", GojwetoErrInvalidRSABytes
+    return "", GojwtErrInvalidRSABytes
   }
   tokenString, err := token.SignedString(o.GetRSAPrivKey())
   fatal(err)
@@ -68,7 +68,7 @@ func (o *Gojweto) createRSAToken(lenBytes, username string) (string, error) {
 }
 
 // Create token with ECDSA algorithm
-func (o *Gojweto) createECDSAToken(lenBytes, username string) (string, error) {
+func (o *Gojwt) createECDSAToken(lenBytes, username string) (string, error) {
   var token *jwt.Token
   // Create the Claims
   claims := Claims{
@@ -86,7 +86,7 @@ func (o *Gojweto) createECDSAToken(lenBytes, username string) (string, error) {
   //} else if lenBytes == "512"{
   //  token = jwt.NewWithClaims(jwt.SigningMethodES512, claims)
   } else {
-    return "", GojwetoErrInvalidECDSABytes
+    return "", GojwtErrInvalidECDSABytes
   }
   tokenString, err := token.SignedString(o.GetECDSAPrivKey())
   fatal(err)
@@ -94,7 +94,7 @@ func (o *Gojweto) createECDSAToken(lenBytes, username string) (string, error) {
 }
 
 // Create token with HMAC-SHA algorithm
-func (o *Gojweto) createHMACSHAToken(lenBytes, username string) (string, error) {
+func (o *Gojwt) createHMACSHAToken(lenBytes, username string) (string, error) {
   var token *jwt.Token
   // Create the Claims
   claims := Claims{
@@ -112,7 +112,7 @@ func (o *Gojweto) createHMACSHAToken(lenBytes, username string) (string, error) 
   } else if lenBytes == "512"{
     token = jwt.NewWithClaims(jwt.SigningMethodHS512, claims)
   } else {
-    return "", GojwetoErrInvalidHMACHSABytes
+    return "", GojwtErrInvalidHMACHSABytes
   }
   tokenString, err := token.SignedString(o.GetSecretByte())
   fatal(err)
@@ -120,10 +120,10 @@ func (o *Gojweto) createHMACSHAToken(lenBytes, username string) (string, error) 
 }
 
 // Validate Token RSA/ECDSA algorithm
-func (o *Gojweto) validateECD_RSAToken(tokenString string) (bool, string, error) {
+func (o *Gojwt) validateECD_RSAToken(tokenString string) (bool, string, error) {
   method := o.GetEncryptMethod()
   if tokenString == "" {
-    return false, "", GojwetoErrInvalidEmptyToken
+    return false, "", GojwtErrInvalidEmptyToken
   }
 
   token, err := jwt.Parse(tokenString,func(token *jwt.Token) (interface{}, error) {
@@ -132,12 +132,12 @@ func (o *Gojweto) validateECD_RSAToken(tokenString string) (bool, string, error)
     } else if method == "ECDSA" {
       return o.GetECDSAPubKey(), nil
     } else {
-      return nil, GojwetoErrInvalidToken
+      return nil, GojwtErrInvalidToken
     }
   })
 
   if token == nil {
-    return false, "", GojwetoErrNotWorkToken
+    return false, "", GojwtErrNotWorkToken
   }
 
   if token.Valid {
@@ -148,10 +148,10 @@ func (o *Gojweto) validateECD_RSAToken(tokenString string) (bool, string, error)
     return true, iss, nil
   } else if ve, ok := err.(*jwt.ValidationError); ok {
     if ve.Errors&jwt.ValidationErrorMalformed != 0 {
-      return false, "", GojwetoErrBadFormatToken
+      return false, "", GojwtErrBadFormatToken
     } else if ve.Errors&(jwt.ValidationErrorExpired|jwt.ValidationErrorNotValidYet) != 0 {
       // Token is either expired or not active yet
-      return false, "", GojwetoErrTokenExpired
+      return false, "", GojwtErrTokenExpired
     } else {
       //"Couldn't handle this token:"
       return false, "", err
@@ -163,9 +163,9 @@ func (o *Gojweto) validateECD_RSAToken(tokenString string) (bool, string, error)
 }
 
 // Validate Token HMAC-SHA algorithm
-func (o *Gojweto) validateHMACSHAToken(tokenString string) (bool, string, error) {
+func (o *Gojwt) validateHMACSHAToken(tokenString string) (bool, string, error) {
   if tokenString == "" {
-    return false, "", GojwetoErrInvalidEmptyToken
+    return false, "", GojwtErrInvalidEmptyToken
   }
   
   token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
@@ -176,7 +176,7 @@ func (o *Gojweto) validateHMACSHAToken(tokenString string) (bool, string, error)
 	})
 	
 	if token == nil {
-    return false, "", GojwetoErrNotWorkToken
+    return false, "", GojwtErrNotWorkToken
   }
   
   if token.Valid {
@@ -187,10 +187,10 @@ func (o *Gojweto) validateHMACSHAToken(tokenString string) (bool, string, error)
     return true, iss, err
   } else if ve, ok := err.(*jwt.ValidationError); ok {
     if ve.Errors&jwt.ValidationErrorMalformed != 0 {
-      return false, "", GojwetoErrBadFormatToken
+      return false, "", GojwtErrBadFormatToken
     } else if ve.Errors&(jwt.ValidationErrorExpired|jwt.ValidationErrorNotValidYet) != 0 {
       // Token is either expired or not active yet
-      return false, "", GojwetoErrTokenExpired
+      return false, "", GojwtErrTokenExpired
     } else {
       //"Couldn't handle this token:"
       return false, "", err
