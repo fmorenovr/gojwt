@@ -11,16 +11,14 @@ import (
 
 // goJwt Struct
 type Gojwt struct {
-  pubECDSAPath     string             // pub ECDSA path
-  privECDSAPath    string             // priv ECDSA path
+  pubKeyPath       string             // pub key path (RSA/ECDSA)
+  privKeyPath      string             // priv key path (RSA/ECDSA)
   pubECDSAKey      *ecdsa.PublicKey   // pub ECDSA Key
   privECDSAKey     *ecdsa.PrivateKey  // priv ECDSA Key
-  pubRSAPath       string             // pub RSA Path
-  privRSAPath      string             // priv RSA Path  
   pubRSAKey        *rsa.PublicKey     // pub RSA Key
   privRSAKey       *rsa.PrivateKey    // priv RSA Key
-  secretKeyWord    string             // secretKey to encrypt
-  headerKeyAuth    string             // headerAuth (in request)
+  secretKeyWord    string             // secretKey (HMAC-SHA)
+  headerKeyAuth    string             // headerAuth (in http-request)
   numHoursDuration time.Duration      // expiration time (hours)
   method           string             // encrypt algorithm
   lenBytes         string             // type of encrypt algorithm (bytes)
@@ -28,7 +26,7 @@ type Gojwt struct {
 }
 
 // prepare RSA Key pairs function
-func prepareRSAKeys(privRSAPath, pubRSAPath string)(*rsa.PublicKey, *rsa.PrivateKey){
+func prepareRSAKeys(privRSAPath, pubRSAPath string)(*rsa.PublicKey, *rsa.PrivateKey, error){
   pwd, _ := os.Getwd()
 
   verifyBytes, err := ioutil.ReadFile(pwd+pubRSAPath)
@@ -43,11 +41,11 @@ func prepareRSAKeys(privRSAPath, pubRSAPath string)(*rsa.PublicKey, *rsa.Private
   signedKey, err := jwt.ParseRSAPrivateKeyFromPEM(signBytes)
   fatal(err)
   
-  return verifiedKey, signedKey
+  return verifiedKey, signedKey, nil
 }
 
 // prepare ECDSA Key pairs function
-func prepareECDSAKeys(privECDSAPath, pubECDSAPath string)(*ecdsa.PublicKey, *ecdsa.PrivateKey){
+func prepareECDSAKeys(privECDSAPath, pubECDSAPath string)(*ecdsa.PublicKey, *ecdsa.PrivateKey, error){
   pwd, _ := os.Getwd()
 
   verifyBytes, err := ioutil.ReadFile(pwd+pubECDSAPath)
@@ -62,7 +60,7 @@ func prepareECDSAKeys(privECDSAPath, pubECDSAPath string)(*ecdsa.PublicKey, *ecd
   signedKey, err := jwt.ParseECPrivateKeyFromPEM(signBytes)
   fatal(err)
   
-  return verifiedKey, signedKey
+  return verifiedKey, signedKey, nil
 }
 
 // Create a New GoJwt Instance with HMAC-SHA encrypt method by default
@@ -77,61 +75,63 @@ func NewGojwt() (*Gojwt, error){
          nameServer: "JnzadsServer"}, nil
 }
 
-// Create a New GoJwt Instance with an encrypt method with parameters as you wish
-func NewGojwtOptions(privKeyPath, pubKeyPath, nameserver, secretkey, headerkey, method, bytes string, hours time.Duration) (*Gojwt, error){
-  var verifiedRSAKey   *rsa.PublicKey
-  var signedRSAKey     *rsa.PrivateKey
-  var verifiedECDSAKey *ecdsa.PublicKey
-  var signedECDSAKey   *ecdsa.PrivateKey
-  
-  if method == "RSA" {
-    if privKeyPath == "" {
-      return nil, GojwtErrInvalidEmptyPrivateKey
-    } else if pubKeyPath == "" {
-      return nil, GojwtErrInvalidEmptyPublicKey
-    }
-    verifiedRSAKey, signedRSAKey = prepareRSAKeys(privKeyPath, pubKeyPath)
-    return &Gojwt{
-         pubRSAPath: pubKeyPath,
-         privRSAPath: privKeyPath,
-         pubRSAKey: verifiedRSAKey,
-         privRSAKey: signedRSAKey,
-         headerKeyAuth: headerkey,
-         numHoursDuration: hours,
-         method: method,
-         lenBytes: bytes,
-         nameServer: nameserver}, nil
-  } else if method == "ECDSA" {
-    if privKeyPath == "" {
-      return nil, GojwtErrInvalidEmptyPrivateKey
-    } else if pubKeyPath == "" {
-      return nil, GojwtErrInvalidEmptyPublicKey
-    }
-    verifiedECDSAKey, signedECDSAKey = prepareECDSAKeys(privKeyPath, pubKeyPath)
-    return &Gojwt{
-         pubECDSAPath: pubKeyPath,
-         privECDSAPath: privKeyPath,
-         pubECDSAKey: verifiedECDSAKey,
-         privECDSAKey: signedECDSAKey,
-         headerKeyAuth: headerkey,
-         numHoursDuration: hours,
-         method: method,
-         lenBytes: bytes,
-         nameServer: nameserver}, nil
-  } else if method == "HMAC-SHA" {
-    if secretkey == "" {
-      return nil, GojwtErrInvalidEmptySecretKey
-    }
-    return &Gojwt{
+// Create a New GoJwt Instance with HMAC-SHA method
+func NewGojwtHMAC_SHA(nameserver, headerkey, secretkey, lenbytes string, hours time.Duration) (*Gojwt, error){
+  if secretkey == "" {
+    return nil, GojwtErrInvalidEmptySecretKey
+  }
+  return &Gojwt{
          secretKeyWord: secretkey,
          headerKeyAuth: headerkey,
          numHoursDuration: hours,
-         method: method,
-         lenBytes: bytes,
+         method: "HMAC-SHA",
+         lenBytes: lenbytes,
          nameServer: nameserver}, nil
-  } else {
-    return NewGojwt()
+}
+
+// Create a New GoJwt Instance with ECDSA method
+func NewGojwtECDSA(nameserver, headerkey, privKeyPath, pubKeyPath, lenbytes string, hours time.Duration) (*Gojwt, error){
+  var verifiedECDSAKey *ecdsa.PublicKey
+  var signedECDSAKey   *ecdsa.PrivateKey
+  if privKeyPath == "" {
+    return nil, GojwtErrInvalidEmptyPrivateKey
+  } else if pubKeyPath == "" {
+    return nil, GojwtErrInvalidEmptyPublicKey
   }
+  verifiedECDSAKey, signedECDSAKey, _ = prepareECDSAKeys(privKeyPath, pubKeyPath)
+  return &Gojwt{
+       pubKeyPath: pubKeyPath,
+       privKeyPath: privKeyPath,
+       pubECDSAKey: verifiedECDSAKey,
+       privECDSAKey: signedECDSAKey,
+       headerKeyAuth: headerkey,
+       numHoursDuration: hours,
+       method: "ECDSA",
+       lenBytes: lenbytes,
+       nameServer: nameserver}, nil
+}
+
+// Create a New GoJwt Instance with RSA method
+func NewGojwtRSA(nameserver, headerkey, privKeyPath, pubKeyPath, lenbytes string, hours time.Duration) (*Gojwt, error){
+  var verifiedRSAKey   *rsa.PublicKey
+  var signedRSAKey     *rsa.PrivateKey
+  
+  if privKeyPath == "" {
+    return nil, GojwtErrInvalidEmptyPrivateKey
+  } else if pubKeyPath == "" {
+    return nil, GojwtErrInvalidEmptyPublicKey
+  }
+  verifiedRSAKey, signedRSAKey, _ = prepareRSAKeys(privKeyPath, pubKeyPath)
+  return &Gojwt{
+       pubKeyPath: pubKeyPath,
+       privKeyPath: privKeyPath,
+       pubRSAKey: verifiedRSAKey,
+       privRSAKey: signedRSAKey,
+       headerKeyAuth: headerkey,
+       numHoursDuration: hours,
+       method: "RSA",
+       lenBytes: lenbytes,
+       nameServer: nameserver}, nil
 }
 
 // set hours of token duration
@@ -203,44 +203,24 @@ func (o *Gojwt) GetECDSAPubKey()(*ecdsa.PublicKey){
 }
 
 // path of keys RSA/ECDSA
-// set PATH of RSA Public key
-func (o *Gojwt) SetPubRSAPath(path string)(){
-  o.pubRSAPath = path
+// set PATH of Public key
+func (o *Gojwt) SetPubKeyPath(path string)(){
+  o.pubKeyPath = path
 }
 
-// get PATH of RSA Public key
-func (o *Gojwt) GetPubRSAPath()(string){
-  return o.pubRSAPath
+// get PATH of Public key
+func (o *Gojwt) GetPubKeyPath()(string){
+  return o.pubKeyPath
 }
 
-// set PATH of RSA Private key
-func (o *Gojwt) SetPrivRSAPath(path string)(){
-  o.privRSAPath = path
+// set PATH of Private key
+func (o *Gojwt) SetPrivKeyPath(path string)(){
+  o.privKeyPath = path
 }
 
-// get PATH of RSA Private key
-func (o *Gojwt) GetPrivRSAPath()(string){
-  return o.privRSAPath
-}
-
-// set PATH of ECDSA Public key
-func (o *Gojwt) SetPubECDSAPath(path string)(){
-  o.pubECDSAPath = path
-}
-
-// get PATH of ECDSA Public key
-func (o *Gojwt) GetPubECDSAPath()(string){
-  return o.pubECDSAPath
-}
-
-// set PATH of ECDSA Private key
-func (o *Gojwt) SetPrivECDSAPath(path string)(){
-  o.privECDSAPath = path
-}
-
-// get PATH of ECDSA Private key
-func (o *Gojwt) GetPrivECDSAPath()(string){
-  return o.privECDSAPath
+// get PATH of Private key
+func (o *Gojwt) GetPrivKeyPath()(string){
+  return o.privKeyPath
 }
 
 // change encrypt method

@@ -16,13 +16,13 @@ func Example_createGoJwtObjects() {
   GojwtObject, err := gojwt.NewGojwt()
   fmt.Println("Example with Default config GoJwt Object: ", GojwtObject, "with error: ", err)
   
-  GojwtObject, err = gojwt.NewGojwtOptions("", "", "", "", "Jnzads-rest-JWT", "HMAC-SHA", "512", 24)
+  GojwtObject, err = gojwt.NewGojwtHMAC_SHA("JnzadsServer", "jnzads-rest", "Jnzads-rest-JWT", "512", 24)
   fmt.Println("Example with empty secret Key and HMAC method: ", GojwtObject, "with error: ", err)
 
-  GojwtObject, err = gojwt.NewGojwtOptions(privECDSAKeyPath, pubECDSAKeyPath, "JnzadsServer", "jnzads-rest", "Jnzads-rest-JWT", "ECDSA", "384", 24)
+  GojwtObject, err = gojwt.NewGojwtRSA("JnzadsServer", "Jnzads-rest-JWT", privKeyPath, pubKeyPath, "384", 24)
   fmt.Println("Example with empty secret Key and RSA/ECDSA method: ", GojwtObject, "with error: ", err)
 
-  GojwtObject, err = gojwt.NewGojwtOptions(privRSAKeyPath, pubRSAKeyPath, "JnzadsServer", "jnzads-rest", "Jnzads-rest-JWT", "RSA", "256", 24)
+  GojwtObject, err = gojwt.NewGojwtECDSA("JnzadsServer", "Jnzads-rest-JWT", privKeyPath, pubKeyPath, "256", 24)
   fmt.Println("Example with empty secret Key and RSA/ECDSA method: ", GojwtObject, "with error: ", err)
 }
 

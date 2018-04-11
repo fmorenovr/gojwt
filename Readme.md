@@ -36,11 +36,14 @@ See more info [here](https://jwt.io).
 
 * Then, you should use for differents Web Frameworks in Go.
         
-    * First, Create a gojwt object, specifying privKeypath, pubKeyPath, nameServer, secretKey, headerAuth in request, algorithm, bytes, and expiration time (in hours).
+    * First, Create a HMAC_SHA gojwt object, specifying nameServer, headerAuth in request, secretKey, bytes, and expiration time (in hours).
     
-            var GojwtObject, _ = gojwt.NewGojwtOptions("", "", "JnzadsServer", "jnzads-rest", "Jnzads-rest-JWT", "HMAC-SHA", "512", 24)
-            var GojwtObject, _ = gojwt.NewGojwtOptions(privECDSAKeyPath, pubECDSAKeyPath, "JnzadsServer", "jnzads-rest", "Jnzads-rest-JWT", "ECDSA", "384", 24)
-            var GojwtObject, _ = gojwt.NewGojwtOptions(privRSAKeyPath, pubRSAKeyPath, "JnzadsServer", "jnzads-rest", "Jnzads-rest-JWT", "RSA", "256", 24)
+            var GojwtObject, _ = gojwt.NewGojwtHMAC_SHA("JnzadsServer", "jnzads-rest", "Jnzads-rest-JWT", "512", 24)
+    
+    * Or a RSA/ECDA Object, specifying nameServer, headerAuth in request, privKeypath, pubKeyPath, bytes, and expiration time (in hours).
+    
+            var GojwtObject, _ = gojwt.NewGojwtRSA("JnzadsServer", "Jnzads-rest-JWT", privKeyPath, pubKeyPath, "384", 24)
+            var GojwtObject, _ = gojwt.NewGojwtECDSA("JnzadsServer", "Jnzads-rest-JWT", privKeyPath, pubKeyPath, "256", 24)
     
         
     * Then, generate the token string specifyind a nameserver and username:

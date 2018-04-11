@@ -17,7 +17,7 @@ func JsonResponse(response interface{}, w http.ResponseWriter) {
 }
 
 // middleware gojwt
-func MiddlewareGojwtHeaders(pageHandler, noAuthHandler http.HandlerFunc, o Gojwt) (http.HandlerFunc) {
+func MiddlewareGojwtHeaders(pageHandler, noAuthHandler http.HandlerFunc, o *Gojwt) (http.HandlerFunc) {
   return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
     tokenString := r.Header.Get(o.GetHeaderKey())
     valid, _, _ := o.ValidateToken(tokenString)
