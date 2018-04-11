@@ -30,16 +30,24 @@ func prepareRSAKeys(privRSAPath, pubRSAPath string)(*rsa.PublicKey, *rsa.Private
   pwd, _ := os.Getwd()
 
   verifyBytes, err := ioutil.ReadFile(pwd+pubRSAPath)
-  fatal(err)
+  if err != nil{
+    return &rsa.PublicKey{}, &rsa.PrivateKey{}, GojwtErrInvalidEmptyPublicKey
+  }
 
   verifiedKey, err := jwt.ParseRSAPublicKeyFromPEM(verifyBytes)
-  fatal(err)
+  if err != nil{
+    return &rsa.PublicKey{}, &rsa.PrivateKey{}, GojwtErrIsNotPubRSAKey
+  }
 
   signBytes, err := ioutil.ReadFile(pwd+privRSAPath)
-  fatal(err)
+  if err != nil{
+    return &rsa.PublicKey{}, &rsa.PrivateKey{}, GojwtErrInvalidEmptyPrivateKey
+  }
 
   signedKey, err := jwt.ParseRSAPrivateKeyFromPEM(signBytes)
-  fatal(err)
+  if err != nil{
+    return &rsa.PublicKey{}, &rsa.PrivateKey{}, GojwtErrIsNotPrivRSAKey
+  }
   
   return verifiedKey, signedKey, nil
 }
@@ -49,16 +57,24 @@ func prepareECDSAKeys(privECDSAPath, pubECDSAPath string)(*ecdsa.PublicKey, *ecd
   pwd, _ := os.Getwd()
 
   verifyBytes, err := ioutil.ReadFile(pwd+pubECDSAPath)
-  fatal(err)
+  if err != nil{
+    return &ecdsa.PublicKey{}, &ecdsa.PrivateKey{}, GojwtErrInvalidEmptyPublicKey
+  }
 
   verifiedKey, err := jwt.ParseECPublicKeyFromPEM(verifyBytes)
-  fatal(err)
+  if err != nil{
+    return &ecdsa.PublicKey{}, &ecdsa.PrivateKey{}, GojwtErrIsNotPubECDSAKey
+  }
 
   signBytes, err := ioutil.ReadFile(pwd+privECDSAPath)
-  fatal(err)
+  if err != nil{
+    return &ecdsa.PublicKey{}, &ecdsa.PrivateKey{}, GojwtErrInvalidEmptyPrivateKey
+  }
 
   signedKey, err := jwt.ParseECPrivateKeyFromPEM(signBytes)
-  fatal(err)
+  if err != nil{
+    return &ecdsa.PublicKey{}, &ecdsa.PrivateKey{}, GojwtErrIsNotPrivECDSAKey
+  }
   
   return verifiedKey, signedKey, nil
 }
@@ -98,7 +114,10 @@ func NewGojwtECDSA(nameserver, headerkey, privKeyPath, pubKeyPath, lenbytes stri
   } else if pubKeyPath == "" {
     return nil, GojwtErrInvalidEmptyPublicKey
   }
-  verifiedECDSAKey, signedECDSAKey, _ = prepareECDSAKeys(privKeyPath, pubKeyPath)
+  verifiedECDSAKey, signedECDSAKey, err := prepareECDSAKeys(privKeyPath, pubKeyPath)
+  if err != nil{
+    return nil, err
+  }
   return &Gojwt{
        pubKeyPath: pubKeyPath,
        privKeyPath: privKeyPath,
@@ -121,7 +140,10 @@ func NewGojwtRSA(nameserver, headerkey, privKeyPath, pubKeyPath, lenbytes string
   } else if pubKeyPath == "" {
     return nil, GojwtErrInvalidEmptyPublicKey
   }
-  verifiedRSAKey, signedRSAKey, _ = prepareRSAKeys(privKeyPath, pubKeyPath)
+  verifiedRSAKey, signedRSAKey, err := prepareRSAKeys(privKeyPath, pubKeyPath)
+  if err != nil{
+    return nil, err
+  }
   return &Gojwt{
        pubKeyPath: pubKeyPath,
        privKeyPath: privKeyPath,
