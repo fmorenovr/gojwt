@@ -6,7 +6,7 @@ import (
 )
 
 var(
-  GojwtErrInvalidEmptySecretKey   = errors.New("Invalid Empty Secret Key")
+  GojwtErrInvalidEmptySecretKey   = errors.New("Invalid Empty Secret Key.\n")
   GojwtErrInvalidEmptyPrivateKey  = errors.New("Invalid Empty Path Private Key.\n")
   GojwtErrInvalidEmptyPublicKey   = errors.New("Invalid Empty Path Public Key.\n")
   GojwtErrInvalidEmptyToken       = errors.New("Invalid Empty Token")
