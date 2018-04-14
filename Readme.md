@@ -34,7 +34,7 @@ See more info [here](https://jwt.io).
 
       go get github.com/jenazads/gojwt/
 
-* Then, you should use for differents Web Frameworks in Go.
+* Then, you should use for differents implements in Go.
         
     * First, Create a HMAC_SHA gojwt object, specifying nameServer, headerAuth in request, secretKey, bytes, and expiration time (in hours).
     
