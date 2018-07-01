@@ -1,7 +1,7 @@
 # golang + JWT = goJwt (GoJweto)
 
 goJwt (Golang for JSON Web Token) is a Golang implementation for REST service security.  
-You can see an extended doc in [godocs](https://godoc.org/github.com/Jenazads/goJwt).
+You can see an extended doc in [godocs](https://godoc.org/github.com/Jenazads/gojwt).
 
 ## JWT
 
