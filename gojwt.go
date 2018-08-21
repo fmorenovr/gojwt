@@ -9,7 +9,7 @@ import (
   "github.com/dgrijalva/jwt-go";
 )
 
-// goJwt Struct
+// GoJwt object
 type Gojwt struct {
   pubKeyPath       string             // pub key path (RSA/ECDSA)
   privKeyPath      string             // priv key path (RSA/ECDSA)
