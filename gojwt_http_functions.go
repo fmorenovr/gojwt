@@ -5,18 +5,25 @@ import (
   "encoding/json";
 )
 
-// parse any to json
-func ParseToJSON(s interface{})([]byte){
+// ToJSON return JSON format of elements
+func ToJSON(s interface{}) ([]byte, error) {
   response, err := json.MarshalIndent(&s, "", "")
   if err != nil {
     _, ok := err.(*json.UnsupportedTypeError)
     if ok {
-      return []byte("Tried to Marshal Invalid Type.")
+      return nil, GojwtErrTriedToMarshal
     } else {
-      return []byte("Interface passed does not exist.")
+      return nil, GojwtErrInterfaceNotExist
     }
   }
-  return response
+  return response, nil
+}
+
+// FromJSON Convert to JSON format the elements
+func FromJSON(data []byte) (map[string]interface{}, error) {
+  elements := make(map[string]interface{})
+  err := json.Unmarshal(data, &elements)
+  return elements, err
 }
 
 // Write in JSON Format

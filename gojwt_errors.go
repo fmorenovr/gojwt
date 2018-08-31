@@ -22,6 +22,8 @@ var(
   GojwtErrIsNotPrivECDSAKey       = errors.New("Is not an ECDSA Private Key.\n")
   GojwtErrIsNotPubRSAKey          = errors.New("Is not a RSA Public Key.\n")
   GojwtErrIsNotPrivRSAKey         = errors.New("Is not a RSA Private Key.\n")
+  GojwtErrTriedToMarshal          = errors.New("Tried to Marshal Invalid Type.\n")
+  GojwtErrInterfaceNotExist       = errors.New("Interface passed does not exist.\n")
 )
 
 // func to evaluate Err
