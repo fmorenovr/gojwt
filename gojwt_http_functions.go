@@ -6,7 +6,7 @@ import (
 )
 
 // parse any to json
-func ParseToJSON(s interface{})(responde []byte){
+func ParseToJSON(s interface{})([]byte){
   response, err := json.MarshalIndent(&s, "", "")
   if err != nil {
     _, ok := err.(*json.UnsupportedTypeError)
